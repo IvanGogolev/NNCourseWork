@@ -4,7 +4,7 @@ def fun(arr):
 	for i in range(1, len(arr)):
 		ans = max(ans, arr[i] - arr[i - 1])
 	return ans
-s = input()
+s = input("введите относительный адрес папки с файлами")
 arr = []
 for x in os.listdir(s):
 	file_path = s + "/" + x

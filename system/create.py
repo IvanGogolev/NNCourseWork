@@ -3,11 +3,14 @@ import filecmp
 import shutil
 
 def init():
-    os.system("mkdir tests")
-    os.system("mkdir hand_test")
-    os.system("mkdir auto_test")
-    os.system("mkdir hand_generators")
-    os.system("mkdir auto_generators")
+    os.system("mkdir tests 2> nul")
+    os.system("mkdir heap 2> nul")
+    os.system("del tests /s /q 2> nul > nul")
+    os.system("del heap /s /q 2> nul > nul")
+    os.system("mkdir hand_test 2> nul")
+    os.system("mkdir auto_test 2> nul")
+    os.system("mkdir hand_generators 2> nul")
+    os.system("mkdir auto_generators 2> nul")
     shutil.copyfile("testlib.h", "./hand_generators/testlib.h")
     shutil.copyfile("testlib.h", "./auto_generators/testlib.h")
 def make_heap():
@@ -25,9 +28,18 @@ def make_heap():
             continue
         print(name)
         t = int(input())
+        os.system("mkdir .\\hand_generators\\tests 2> nul")
+        
         for j in range(t):
+            open("./hand_generators/tests/" + name + ".exe", "w")
+            shutil.copyfile("./" + name + ".exe", "./hand_generators/tests/" + name + ".exe" )
             s = input()
-            os.system(f".\\hand_generators\\{name}.exe {s} > .\\heap\\hand_generators_{name}_{str(j)}.in")
+            os.system(".\\hand_generators\\tests\\" + name + ".exe" + " > ./hand_generators/tests/1 $ " + s)
+            os.system("del .\\hand_generators\\tests\\" + name + ".exe")
+            for y in os.listdir("./hand_generators/tests"):
+                shutil.copyfile("./hand_generators/tests/" + y, "./heap/hand_generators_" + name + "_" + str(j) + "_" + y + ".in")
+        os.system("rmdir .\\hand_generators\\tests /s /q 2> nul")
+        os.system("del .\\" + name + ".exe")
     print("auto generators")
     arr = os.listdir("./auto_generators")
     for x in arr:
@@ -37,18 +49,15 @@ def make_heap():
         if os.system(f"g++ -o {name}.exe ./auto_generators/{name}.cpp") != 0:
             continue
         print(name)
-        os.system("mkdir .\\auto_generators\\tests")
-        shutil.copyfile("./auto_generators/" + name + ".exe", "./auto_generators/tests/" + name + ".exe" )
-        os.chdir("./auto_generators/tests")
-        os.system(name + ".exe")
-        os.chdir("../")
-        os.chdir("../")
-        #os.system(".\\auto_generators\\tests\\" + name + ".exe" + " > ./auto_generators/tests")
+        os.system("mkdir .\\auto_generators\\tests 2> nul")
+        open("./auto_generators/tests/" + name + ".exe", "w")
+        shutil.copyfile("./" + name + ".exe", "./auto_generators/tests/" + name + ".exe" )
+        os.system(".\\auto_generators\\tests\\" + name + ".exe" + " > ./auto_generators/tests/1.txt")
         os.system("del .\\auto_generators\\tests\\" + name + ".exe")
         for y in os.listdir("./auto_generators/tests"):
             shutil.copyfile("./auto_generators/tests/" + y, "./heap/auto_generators_" + name + "_" + y + ".in")
-                  
-        
+        os.system("del .\\" + name + ".exe")        
+        os.system("rmdir .\\auto_generators\\tests 2> nul /s /q")
             
 
 TEST = 1
@@ -66,13 +75,12 @@ def register_test(x):
 
 def make_tests():
     os.system("g++ -o validator.exe validator.cpp")
-    os.system("mkdir tests")
     for x in os.listdir("./heap"):
         register_test("./heap/" + x)
+    os.system("rmdir heap /s /q")
+    os.system("del .\\validator.exe")
+    os.system("del .\\hand_generators\\testlib.h")
+    os.system("del .\\auto_generators\\testlib.h")
 init()
 make_heap()
 make_tests()
-
-
-
-
